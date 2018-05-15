@@ -1,0 +1,3 @@
+[submodule "depends/eigen"]
+	path = depends/eigen
+	url = https://github.com/eigenteam/eigen-git-mirror
