@@ -72,6 +72,12 @@ namespace mnet {
 	    
 	    return ret;
 	}
+
+	void update_params(const WeightType &delta_w, const BiasType &delta_b)
+	{
+	    *weights += delta_w;
+	    *bias += delta_b;
+	}
 	
     private:
 
