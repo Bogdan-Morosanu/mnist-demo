@@ -1,6 +1,0 @@
-[submodule "depends/eigen"]
-	path = depends/eigen
-	url = https://github.com/eigenteam/eigen-git-mirror
-[submodule "depends/googletest"]
-	path = depends/googletest
-	url = https://github.com/google/googletest
