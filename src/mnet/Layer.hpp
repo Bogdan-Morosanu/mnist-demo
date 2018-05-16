@@ -16,10 +16,19 @@ namespace mnet {
 
 	using OutType = Eigen::Matrix<double, OutDim, 1>;
 	
+	struct Gradients {
+
+	    std::unique_ptr<WeightType> weight_grad;
+
+	    std::unique_ptr<BiasType> bias_grad;
+	};
+
+	
 	explicit
 	FcLayer(ActFunction fn = ActFunction())
 	    : fn(fn)
 	    , weights(std::make_unique<decltype(*weights)>())
+	    , bias(std::make_unique<decltype(*bias)>()
 	{
 	    
 	}
@@ -38,13 +47,6 @@ namespace mnet {
 	    
 	    return ret;
 	}
-
-	struct Gradients {
-
-	    std::unique_ptr<WeightType> weight_grad;
-
-	    std::unique_ptr<BiasType> bias_grad;
-	};
 
 	Gradients backward(const InType &in) const
 	{
