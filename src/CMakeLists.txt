@@ -9,4 +9,4 @@ add_subdirectory(threads)
 
 include_directories("${PROJECT_SOURCE_DIR}" "/usr/include/eigen3")
 
-target_link_libraries(demo mnet threads gtest boost_program_options)
+target_link_libraries(demo mnet threads gtest boost_program_options pthread)

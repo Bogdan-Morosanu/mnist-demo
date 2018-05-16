@@ -1,7 +1,10 @@
 #include <iostream>
 #include <exception>
+#include <mutex>
 
 #include <boost/program_options.hpp>
+
+#include "threads/ThreadRunner.hpp"
 
 namespace po = boost::program_options;
 
@@ -24,10 +27,24 @@ int main(int argc, char **argv)
 	}
 
 	if (vm.count("thread-num")) {
-	    std::cout << "got thread num " << vm["thread-num"].as<int>() << std::endl;
+	    int th_num = vm["thread-num"].as<int>();
+	    std::cout << "starting " << th_num << " threads...\n";
+
+	    std::mutex mtx;
+	    
+	    thr::ThreadRunner runner(th_num,
+				     [&](){
+					 std::lock_guard<std::mutex> lock(mtx);
+					 std::cout << "I'm here!" << std::endl;
+				     });
+
+	    runner.join_all();
+
+	    std::cout << "done!" << std::endl;
 	
 	} else {
 	    std::cout << "no thread num specified!" << std::endl;
+	    std::exit(EXIT_FAILURE);
 	}
 
     } catch(const std::exception &e) {
