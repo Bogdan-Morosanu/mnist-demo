@@ -54,7 +54,7 @@ namespace mnet {
 	    // d / dw f (w*x + b)
 	    // == df / du * du / dw with u = w*x + b
 	    // df / du * x
-	    auto u = std::make_unique<OutputType>();
+	    auto u = std::make_unique<OutType>();
 
 	    *u = ((*this->weights) * in).transpose();
 
