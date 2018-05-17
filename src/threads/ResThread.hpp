@@ -56,7 +56,7 @@ namespace thr {
 	public:    
 	    explicit
 	    ThreadFunctionProxy(ResThread &res_th)
-		: res_thread(&res_th)
+		: res_thread(res_th)
 	    { }
 
 	    void operator()()
