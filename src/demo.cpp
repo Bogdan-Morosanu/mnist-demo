@@ -33,7 +33,8 @@ int main(int argc, char **argv)
 	    std::mutex mtx;
 	    
 	    thr::ThreadRunner runner(th_num,
-				     [&](){
+				     [&]()
+				     {
 					 std::lock_guard<std::mutex> lock(mtx);
 					 std::cout << "I'm here!" << std::endl;
 				     });
