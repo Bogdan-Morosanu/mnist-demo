@@ -59,6 +59,13 @@ namespace thr {
 	{
 	    threads[id]->resume();
 	}
+
+	/// @brief joins all threads and then destroys them once they are done executing
+	void finish()
+	{
+	    join_all();
+	    threads.clear();
+	}
 	
     private:
 
