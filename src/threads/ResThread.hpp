@@ -9,7 +9,14 @@
 
 namespace thr {
 
-    /// resumable thread
+    /// @brief Resumable thread, similar to std::thread, but with pause and resume functionality.
+    ///        Takes as input a Work Sequences, i.e. a class that can be move constructed and has
+    ///        the following member functions:
+    ///           1) void step()     - execute an atomic piece of work that cannot be paused
+    ///           2) bool finished() - inform the caller if all the work steps have been completed
+    ///
+    ///        This class takes ownership of that work sequence and runs it in a separate thread
+    ///        of execution.
     template < typename WorkSeq >
     class ResThread {	
     public:
@@ -28,8 +35,6 @@ namespace thr {
 	bool joinable() { return thread.joinable(); }
 
 	void join() { thread.join(); }
-
-	void detach() { thread.detach(); }
 
 	/// pause execution until resume() is called
 	void pause()
@@ -58,7 +63,6 @@ namespace thr {
 	/// get the underlying value type of our work sequence
 	using WorkSeqVal = typename std::decay<WorkSeq>::type;
 	
-
 	/// @brief Synchronisation data to be allocated on the heap.
 	/// @detail Gives our thread function proxy a permanent location to
 	///         read synchronisation data from, even if the resthread object

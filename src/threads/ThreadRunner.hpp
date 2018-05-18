@@ -7,6 +7,23 @@
 
 namespace thr {
 
+    /// @brief class manages a number of different resumable threads.
+    ///        A resumable thread is a function that executes some work in a
+    ///        different thread, must be move constructible and have the
+    ///        following public member functions:
+    ///	          1) void pause()         - pause execution of the thread (with
+    ///                                     some implementation defined delay).
+    ///
+    ///           2) bool is_paused()     - inform the caller if the thread
+    ///                                     is currently paused.
+    ///
+    ///           3) void resume()        - resume thread execution.
+    ///
+    ///           4) bool joinable()      - inform the caller if the thread is
+    ///                                     joinable (ie it still has work to do).
+    ///
+    ///           5) void join()          - join the thread: returns when the thread
+    ///                                     has stopped execution.
     class ThreadRunner {
     public:
 
@@ -56,8 +73,6 @@ namespace thr {
 	    virtual bool joinable() = 0;
 
 	    virtual void join() = 0;
-
-	    virtual void detach() = 0;
 	};
 
 	template < typename ResThread >
@@ -91,11 +106,6 @@ namespace thr {
 		th.join();
 	    }
 
-	    void detach() override
-	    {
-		th.detach();
-	    }
-	    
 	    ResThread th;
 	};
 
