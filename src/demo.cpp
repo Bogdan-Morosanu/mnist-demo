@@ -8,6 +8,10 @@
 #include "threads/CoutWorkSequence.hpp"
 #include "threads/ResThread.hpp"
 
+#include "parser/Parser.hpp"
+#include "parser/CommandParser.hpp"
+#include "parser/EchoCommand.hpp"
+
 namespace po = boost::program_options;
 
 int main(int argc, char **argv)
@@ -28,35 +32,42 @@ int main(int argc, char **argv)
 	    std::exit(0);
 	}
 
-	if (vm.count("thread-num")) {
-	    int th_num = vm["thread-num"].as<int>();
-	    std::cout << "starting " << th_num << " threads...\n";
+	psr::CaseParser parser;
 
-	    thr::ThreadRunner runner;
+	parser.push_back(psr::CommandParser<psr::EchoCommand>());
 
-	    for (int i = 0; i < th_num; ++i) {
-	    	thr::ResThread<thr::CoutWorkSequence> res_thread({"thread " + std::to_string(i) + "\n", 10 });
-	    	runner.push_back(std::move(res_thread));
-	    }
-
-	    std::this_thread::sleep_for(std::chrono::seconds(5));
-
-	    runner.pause(0);
-	    runner.pause(1);
-
-	    std::this_thread::sleep_for(std::chrono::seconds(10));
-
-	    runner.resume(0);
-	    runner.resume(1);
-	    
-	    runner.join_all();
-
-	    std::cout << "done!" << std::endl;
+	parser.parse_stream(std::cin, std::cerr);
 	
-	} else {
-	    std::cout << "no thread num specified!" << std::endl;
-	    std::exit(EXIT_FAILURE);
-	}
+	//  THREADING CODE
+	// if (vm.count("thread-num")) {
+	//     int th_num = vm["thread-num"].as<int>();
+	//     std::cout << "starting " << th_num << " threads...\n";
+
+	//     thr::ThreadRunner runner;
+
+	//     for (int i = 0; i < th_num; ++i) {
+	//     	thr::ResThread<thr::CoutWorkSequence> res_thread({"thread " + std::to_string(i) + "\n", 10 });
+	//     	runner.push_back(std::move(res_thread));
+	//     }
+
+	//     std::this_thread::sleep_for(std::chrono::seconds(5));
+
+	//     runner.pause(0);
+	//     runner.pause(1);
+
+	//     std::this_thread::sleep_for(std::chrono::seconds(10));
+
+	//     runner.resume(0);
+	//     runner.resume(1);
+	    
+	//     runner.join_all();
+
+	//     std::cout << "done!" << std::endl;
+	
+	// } else {
+	//     std::cout << "no thread num specified!" << std::endl;
+	//     std::exit(EXIT_FAILURE);
+	// }
 
     } catch(const std::exception &e) {
 	std::cout << e.what() << std::endl;
