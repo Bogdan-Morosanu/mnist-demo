@@ -9,13 +9,14 @@ namespace psr {
     class EchoCommand {
     public:
 
-	std::string name() { return "echo"; }
-
-	void issue(int i)
-	{
-	    std::cout << "echo " << i << std::endl;
-	}
+	std::string name() const { return "echo"; }
 	
+	std::string pattern() const { return ".*"; }
+	
+	void issue(std::string::const_iterator it)
+	{
+	    std::cout << &*it << std::endl;
+	}	
     };
 }
 

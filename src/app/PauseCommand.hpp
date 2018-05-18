@@ -1,6 +1,11 @@
 #ifndef DEMO_APP_PAUSE_COMMAND
 #define DEMO_APP_PAUSE_COMMAND
 
+#include <string>
+#include <cstdlib>
+
+#include "AppDefs.hpp"
+
 #include "threads/ThreadRunner.hpp"
 
 namespace app {
@@ -14,9 +19,12 @@ namespace app {
 	{ }
 	
 	std::string name() const { return "pause"; }
+
+	std::string pattern() const { return AppDefs::number_pattern(); }
 	
-	void issue(int id)
+	void issue(std::string::const_iterator it)
 	{
+	    int id = std::atoi(&*it);
 	    runner->pause(id - 1); // we map our application's ids [1 -> nb_threads]
 	                           // into the thread runner's "natural" C++ ids
 	}

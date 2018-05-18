@@ -1,14 +1,16 @@
 #ifndef PSR_CASE_PARSER
 #define PSR_CASE_PARSER
 
-namespace psr {
+#include "CommandParser.hpp"
 
+namespace psr {
 
     class CaseParser {
     public:
 
 	CaseParser()
 	    : cases()
+	    , exit_parser()
 	{ }
 
 	template < typename Case >
@@ -18,6 +20,11 @@ namespace psr {
 	    cases.push_back(std::make_unique<CaseModel<ValueType>>(std::move(c)));
 	}
 
+	void set_exit_parser(psr::ExitCommandParser &&ep)
+	{
+	    this->exit_parser = ep;
+	}
+        
 	/// parse input stream in and log parsing errors to err
 	void parse_stream(std::istream &in, std::ostream &err)
 	{
@@ -33,8 +40,12 @@ namespace psr {
 		    }
 		}
 
-		if (!success) {
-		    err << "error in input \"" << s << "\"" << std::endl;		    
+		if (exit_parser.accept(s)) {
+		    break; // end parsing
+		}
+		
+		if (!success) { // command not recognised
+		    err << "command not recognised \"" << s << "\"" << std::endl;		    
 		}
 	    }
 	}
@@ -61,6 +72,8 @@ namespace psr {
 	};
 
 	std::vector<std::unique_ptr<CaseConcept>> cases;
+
+	psr::ExitCommandParser exit_parser;
     };
 }
 

@@ -15,9 +15,9 @@ namespace app {
 	: th_runner()
 	, parser()
     {
-	parser.push_back(psr::CommandParser<psr::EchoCommand>());
-	parser.push_back(psr::CommandParser<app::PauseCommand>(app::PauseCommand(th_runner)));
-	parser.push_back(psr::CommandParser<app::ResumeCommand>(app::ResumeCommand(th_runner)));
+	parser.push_back(psr::UnaryCommandParser<psr::EchoCommand>());
+	parser.push_back(psr::UnaryCommandParser<app::PauseCommand>(app::PauseCommand(th_runner)));
+	parser.push_back(psr::UnaryCommandParser<app::ResumeCommand>(app::ResumeCommand(th_runner)));
     }
 
     void Application::run(int th_num)
