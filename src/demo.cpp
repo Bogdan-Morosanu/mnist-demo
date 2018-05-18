@@ -4,13 +4,7 @@
 
 #include <boost/program_options.hpp>
 
-#include "threads/ThreadRunner.hpp"
-#include "threads/CoutWorkSequence.hpp"
-#include "threads/ResThread.hpp"
-
-#include "parser/Parser.hpp"
-#include "parser/CommandParser.hpp"
-#include "parser/EchoCommand.hpp"
+#include "app/App.hpp"
 
 namespace po = boost::program_options;
 
@@ -31,43 +25,20 @@ int main(int argc, char **argv)
 	    std::cout << desc << std::endl;
 	    std::exit(0);
 	}
-
-	psr::CaseParser parser;
-
-	parser.push_back(psr::CommandParser<psr::EchoCommand>());
-
-	parser.parse_stream(std::cin, std::cerr);
 	
-	//  THREADING CODE
-	// if (vm.count("thread-num")) {
-	//     int th_num = vm["thread-num"].as<int>();
-	//     std::cout << "starting " << th_num << " threads...\n";
+	if (vm.count("thread-num")) {
+	    int th_num = vm["thread-num"].as<int>();
+	    std::cout << "starting " << th_num << " threads...\n";
 
-	//     thr::ThreadRunner runner;
-
-	//     for (int i = 0; i < th_num; ++i) {
-	//     	thr::ResThread<thr::CoutWorkSequence> res_thread({"thread " + std::to_string(i) + "\n", 10 });
-	//     	runner.push_back(std::move(res_thread));
-	//     }
-
-	//     std::this_thread::sleep_for(std::chrono::seconds(5));
-
-	//     runner.pause(0);
-	//     runner.pause(1);
-
-	//     std::this_thread::sleep_for(std::chrono::seconds(10));
-
-	//     runner.resume(0);
-	//     runner.resume(1);
+	    app::Application demo_app;
+	    demo_app.run(th_num);
 	    
-	//     runner.join_all();
-
-	//     std::cout << "done!" << std::endl;
+	    std::cout << "done!" << std::endl;
 	
-	// } else {
-	//     std::cout << "no thread num specified!" << std::endl;
-	//     std::exit(EXIT_FAILURE);
-	// }
+	} else {
+	    std::cout << "no thread num specified!" << std::endl;
+	    std::exit(EXIT_FAILURE);
+	}
 
     } catch(const std::exception &e) {
 	std::cout << e.what() << std::endl;

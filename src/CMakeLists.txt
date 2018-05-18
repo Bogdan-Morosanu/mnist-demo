@@ -4,10 +4,11 @@ project (demo)
 
 add_executable(demo demo.cpp)
 
+add_subdirectory(app)
 add_subdirectory(mnet)
 add_subdirectory(threads)
 add_subdirectory(parser)
 
 include_directories("${PROJECT_SOURCE_DIR}" "/usr/include/eigen3")
 
-target_link_libraries(demo mnet threads parser gtest boost_program_options pthread)
+target_link_libraries(demo app mnet threads parser gtest boost_program_options pthread)
