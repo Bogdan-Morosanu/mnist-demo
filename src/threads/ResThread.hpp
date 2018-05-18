@@ -55,8 +55,13 @@ namespace thr {
 	    
 	    sync->wakeup_cv.notify_one();
 	}
-
-	bool is_paused() { return sync->paused; }
+	
+	bool is_paused()
+	{
+	    std::lock_guard<std::mutex> lock(sync->pause_mtx);
+	    
+	    return sync->paused;
+	}
 	
     private:
 
