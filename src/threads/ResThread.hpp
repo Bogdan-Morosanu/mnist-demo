@@ -1,6 +1,11 @@
+#ifndef THREADS_RES_THREAD
+#define THREADS_RES_THREAD
+
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <exception>
+#include <iostream>
 
 namespace thr {
 
@@ -8,15 +13,14 @@ namespace thr {
     template < typename WorkSeq >
     class ResThread {	
     public:
+
+	explicit
 	ResThread(WorkSeq work_seq)
-	    : work(std::move(work_seq))
-	    , is_paused(false)
-	    , pause_mtx()
-	    , wakeup_cv()
+	    : sync(std::make_unique<Sync>(std::move(work_seq)))
 	    , thread() // we don't start the thread right away since that could be undefined
 	               // behavior if someone re-ordered members in this class
 	{
-	    thread = std::thread(ThreadFunctionProxy(*this)); // start once all members have been constructed
+	    thread = std::thread(ThreadFunctionProxy(*sync)); // start once all members have been constructed
 	}
 
 	// expose some std::thread functionality
@@ -30,75 +34,103 @@ namespace thr {
 	/// pause execution until resume() is called
 	void pause()
 	{
-	    std::lock_guard<std::mutex> lock(pause_mtx);
+	    std::lock_guard<std::mutex> lock(sync->pause_mtx);
 
-	    is_paused = true;
+	    sync->paused = true;
 	}
 
 	/// resume thread if paused before-hand
 	void resume()
 	{
-	    std::lock_guard<std::mutex> lock(pause_mtx);
+	    {
+		std::lock_guard<std::mutex> lock(sync->pause_mtx);
 
-	    is_paused = false;
-
-	    wakeup_cv.notify_one();
+		sync->paused = false;
+	    }
+	    
+	    sync->wakeup_cv.notify_one();
 	}
 
-	bool paused() { return is_paused; }
+	bool is_paused() { return sync->paused; }
 	
     private:
 
+	/// get the underlying value type of our work sequence
+	using WorkSeqVal = typename std::decay<WorkSeq>::type;
+	
+
+	/// @brief Synchronisation data to be allocated on the heap.
+	/// @detail Gives our thread function proxy a permanent location to
+	///         read synchronisation data from, even if the resthread object
+	///         handle has been moved arroud the code.
+	struct Sync {
+
+	    Sync(WorkSeqVal &&work)
+		: work(work)
+		, paused(false)
+		, pause_mtx()
+		, wakeup_cv()
+	    { }
+	    
+	    WorkSeqVal work;
+
+	    bool paused;
+
+	    std::mutex pause_mtx;
+
+	    std::condition_variable wakeup_cv;
+	};
+	
 	// we don't pass *this to std::thread, because that would copy
 	// the current object into a new one, which is not what we want.
 	// we just need a lightweight proxy.
 	class ThreadFunctionProxy {
 	public:    
 	    explicit
-	    ThreadFunctionProxy(ResThread &res_th)
-		: res_thread(res_th)
+	    ThreadFunctionProxy(Sync &res_thread_sync)
+		: sync(res_thread_sync)
 	    { }
 
 	    void operator()()
 	    {
-		// dispatch to resumable thread implementation
-		res_thread();
+		while (!sync.work.finished()) {
+		    try {
+			sync.work.step();
+
+		    } catch(std::exception &e) {
+			std::cerr << "exception thrown in work sequence: " << e.what() << std::endl;
+			return;
+		    }
+
+		    wait_if_needed();
+		}
 	    }
 	    
 	private:
-	    ResThread &res_thread;
+
+	    /// pause thread if pause() has been called, until resume() is called
+	    void wait_if_needed()
+	    {
+		std::unique_lock<std::mutex> lock(sync.pause_mtx);
+
+		if (sync.paused) {
+		    sync.wakeup_cv.wait(lock, [&]() { return !sync.paused; });
+		}
+	    }
+
+	    Sync &sync;
 	};
 	
-	/// "main" function to be run inside the std::thread
-	void operator()()
-	{
-	    while (!work.finished()) {
-		work.step();
-		wait_if_needed();
-	    }
-	}
-
-	/// pause thread if pause() has been called, until resume is called
-	void wait_if_needed()
-	{
-	    std::unique_lock<std::mutex> lock(pause_mtx);
-
-	    if (is_paused) {
-		wakeup_cv.wait(lock, [&]() { return !is_paused; });
-	    }
-	}
-
-	/// get the underlying value type of our work sequence
-	using WorkSeqVal = typename std::decay<WorkSeq>::type;
+	// the resthread object is the sole owner of both the thread and the data it
+	// operates on. Since we cannot legally destroy the std::thread object while it is running,
+	// and when we move this object, we move both the std::unique_ptr and the std::thread
+	// together, we conclude that, at the moment of destruction, the std::thread has exited,
+	// and it is thus safe to destroy the synchronisation data sync.
 	
-	WorkSeqVal work;
-
-	bool is_paused;
+	std::unique_ptr<Sync> sync;
 	
-	std::mutex pause_mtx;
-
-	std::condition_variable wakeup_cv;
-
 	std::thread thread;
     };
 }
+
+#endif

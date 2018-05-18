@@ -1,6 +1,12 @@
+#ifndef THREADS_COUT_WORK_SEQUENCE
+#define THREADS_COUT_WORK_SEQUENCE
+
 #include <iostream>
 #include <string>
 #include <cassert>
+#include <thread>
+#include <chrono>
+#include <mutex>
 
 namespace thr {
 
@@ -21,7 +27,7 @@ namespace thr {
 	    assert(times > 0);
 	}
 	
-	bool finised()
+	bool finished()
 	{
 	    return times == 0;
 	}
@@ -29,15 +35,19 @@ namespace thr {
 	void step()
 	{
 	    assert(!finished());
-	    
+
 	    times--;
-	    std::cout << str;
+	    std::cout << str;			
+	    
+	    std::this_thread::sleep_for(std::chrono::seconds(3));
 	}
 	
     private:
-	
+
 	std::string str;
 
 	int times;
     };
 }
+
+#endif

@@ -5,6 +5,8 @@
 #include <boost/program_options.hpp>
 
 #include "threads/ThreadRunner.hpp"
+#include "threads/CoutWorkSequence.hpp"
+#include "threads/ResThread.hpp"
 
 namespace po = boost::program_options;
 
@@ -30,15 +32,23 @@ int main(int argc, char **argv)
 	    int th_num = vm["thread-num"].as<int>();
 	    std::cout << "starting " << th_num << " threads...\n";
 
-	    std::mutex mtx;
-	    
-	    thr::ThreadRunner runner(th_num,
-				     [&]()
-				     {
-					 std::lock_guard<std::mutex> lock(mtx);
-					 std::cout << "I'm here!" << std::endl;
-				     });
+	    thr::ThreadRunner runner;
 
+	    for (int i = 0; i < th_num; ++i) {
+	    	thr::ResThread<thr::CoutWorkSequence> res_thread({"thread " + std::to_string(i) + "\n", 10 });
+	    	runner.push_back(std::move(res_thread));
+	    }
+
+	    std::this_thread::sleep_for(std::chrono::seconds(5));
+
+	    runner.pause(0);
+	    runner.pause(1);
+
+	    std::this_thread::sleep_for(std::chrono::seconds(10));
+
+	    runner.resume(0);
+	    runner.resume(1);
+	    
 	    runner.join_all();
 
 	    std::cout << "done!" << std::endl;
