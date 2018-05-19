@@ -59,7 +59,8 @@ namespace psr {
     ///                                            detected by the parser in the input.
     template < typename Command >
     class CommandParser {
-
+    public:
+	
 	explicit
 	CommandParser(Command c = Command())
 	    : rgx("^\\s*" + c.name() + "\\s*$")

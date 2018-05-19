@@ -53,7 +53,10 @@ namespace psr {
     private:
 
 	struct CaseConcept {
+
 	    virtual bool accept(const std::string &str) = 0;
+
+	    virtual ~CaseConcept() = default;
 	};
 
 	template < typename Case >

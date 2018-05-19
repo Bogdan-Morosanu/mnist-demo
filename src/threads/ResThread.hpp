@@ -7,9 +7,11 @@
 #include <exception>
 #include <iostream>
 
-namespace thr {
+#include "ThreadDefs.hpp"
 
-    /// @brief Resumable thread, similar to std::thread, but with pause and resume functionality.
+namespace thr {
+    
+    /// @brief Resumable thread, similar to std::thread, but with pause, restart and stop functionality.
     ///        Takes as input a Work Sequences, i.e. a class that can be move constructed and has
     ///        the following member functions:
     ///           1) void step()     - execute an atomic piece of work that cannot be paused
@@ -19,6 +21,9 @@ namespace thr {
     ///        of execution.
     template < typename WorkSeq >
     class ResThread {	
+
+       	static_assert(std::is_same<WorkSeq, typename std::decay<WorkSeq>::type>::value,
+		      "Please create threads with value work sequence types only!");
     public:
 
 	explicit
@@ -30,38 +35,57 @@ namespace thr {
 	    thread = std::thread(ThreadFunctionProxy(*sync)); // start once all members have been constructed
 	}
 
-	// expose some std::thread functionality
-	
+	// expose some std::thread functionality	
 	bool joinable() { return thread.joinable(); }
 
 	void join() { thread.join(); }
 
-	/// pause execution until resume() is called
+	/// pause execution until restart() is called
 	void pause()
 	{
-	    std::lock_guard<std::mutex> lock(sync->pause_mtx);
+	    std::lock_guard<std::mutex> lock(sync->mtx);
 
 	    sync->paused = true;
 	}
-
-	/// resume thread if paused before-hand
-	void resume()
+		
+	/// restart thread if paused before-hand
+	void restart()
 	{
 	    {
-		std::lock_guard<std::mutex> lock(sync->pause_mtx);
+		std::lock_guard<std::mutex> lock(sync->mtx);
 
 		sync->paused = false;
 	    }
 	    
 	    sync->wakeup_cv.notify_one();
 	}
-	
-	bool is_paused()
+
+	/// stop thread execution
+	void stop()
 	{
-	    std::lock_guard<std::mutex> lock(sync->pause_mtx);
-	    
-	    return sync->paused;
+	    std::lock_guard<std::mutex> lock(sync->mtx);
+
+	    sync->stopped = true;
 	}
+
+	Status status()
+	{
+	    std::lock_guard<std::mutex> lock(sync->mtx);
+
+	    if (sync->stopped) {
+		return Status::STOPPED;
+
+	    } else if (sync->paused) {
+		return Status::PAUSED;
+
+	    } else if (!sync->finished) {
+		return Status::RUNNING;
+
+	    } else {
+		return Status::FINISHED;
+	    }
+	}
+
 	
     private:
 
@@ -71,13 +95,15 @@ namespace thr {
 	/// @brief Synchronisation data to be allocated on the heap.
 	/// @detail Gives our thread function proxy a permanent location to
 	///         read synchronisation data from, even if the resthread object
-	///         handle has been moved arroud the code.
+	///         handle has been moved arround the code.
 	struct Sync {
 
 	    Sync(WorkSeqVal &&work)
 		: work(work)
 		, paused(false)
-		, pause_mtx()
+		, stopped(false)
+		, finished(false)
+		, mtx()
 		, wakeup_cv()
 	    { }
 	    
@@ -85,7 +111,11 @@ namespace thr {
 
 	    bool paused;
 
-	    std::mutex pause_mtx;
+	    bool stopped;
+
+	    bool finished;
+	    
+	    std::mutex mtx;
 
 	    std::condition_variable wakeup_cv;
 	};
@@ -102,7 +132,8 @@ namespace thr {
 
 	    void operator()()
 	    {
-		while (!sync.work.finished()) {
+		while (!sync.work.finished() && !is_stopped()) {
+
 		    try {
 			sync.work.step();
 
@@ -111,20 +142,38 @@ namespace thr {
 			return;
 		    }
 
+		    // yes, we acquire the lock twice, but I expect that would
+		    // not be a performance problem, since we almost always are
+		    // the only thread waiting on it.
 		    wait_if_needed();
 		}
+
+		std::lock_guard<std::mutex> lock(sync.mtx);
+		sync.finished = true;
 	    }
 	    
 	private:
 
-	    /// pause thread if pause() has been called, until resume() is called
+	    /// pause thread if pause() has been called, until restart() is called
 	    void wait_if_needed()
 	    {
-		std::unique_lock<std::mutex> lock(sync.pause_mtx);
+		std::unique_lock<std::mutex> lock(sync.mtx);
 
 		if (sync.paused) {
 		    sync.wakeup_cv.wait(lock, [&]() { return !sync.paused; });
+		} 
+	    }
+
+	    bool is_stopped()
+	    {
+		bool ret;
+		
+		{
+		    std::lock_guard<std::mutex> lock(sync.mtx);
+		    ret = sync.stopped;
 		}
+		
+		return ret;		
 	    }
 
 	    Sync &sync;

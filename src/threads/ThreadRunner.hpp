@@ -4,6 +4,7 @@
 #include <thread>
 #include <vector>
 #include "ResThread.hpp"
+#include "ThreadDefs.hpp"
 
 namespace thr {
 
@@ -14,15 +15,17 @@ namespace thr {
     ///	          1) void pause()         - pause execution of the thread (with
     ///                                     some implementation defined delay).
     ///
-    ///           2) bool is_paused()     - inform the caller if the thread
-    ///                                     is currently paused.
+    ///           2) thr::Status status() - inform the caller of the thread's current
+    ///                                     status (running, paused, stopped, finished).
     ///
-    ///           3) void resume()        - resume thread execution.
+    ///           3) void restart()       - restart thread execution.
     ///
-    ///           4) bool joinable()      - inform the caller if the thread is
+    ///           4) void stop()          - stop thread execution.
+    ///
+    ///           5) bool joinable()      - inform the caller if the thread is
     ///                                     joinable (ie it still has work to do).
     ///
-    ///           5) void join()          - join the thread: returns when the thread
+    ///           6) void join()          - join the thread: returns when the thread
     ///                                     has stopped execution.
     class ThreadRunner {
     public:
@@ -55,16 +58,31 @@ namespace thr {
 	    threads[id]->pause();
 	}
 
-	void resume(int id)
+	void restart(int id)
 	{
-	    threads[id]->resume();
+	    threads[id]->restart();
 	}
 
+	void stop(int id)
+	{
+	    threads[id]->stop();
+	}
+
+	Status status(int id)
+	{
+	    return threads[id]->status();
+	}
+	
 	/// @brief joins all threads and then destroys them once they are done executing
 	void finish()
 	{
 	    join_all();
 	    threads.clear();
+	}
+
+	std::size_t size() const
+	{
+	    return threads.size();
 	}
 	
     private:
@@ -73,13 +91,17 @@ namespace thr {
 
 	    virtual void pause() = 0;
 
-	    virtual bool is_paused() = 0;
+	    virtual Status status() = 0;
 
-	    virtual void resume() = 0;
+	    virtual void restart() = 0;
 
+	    virtual void stop() = 0;
+	    
 	    virtual bool joinable() = 0;
 
 	    virtual void join() = 0;
+
+	    virtual ~ResThreadConcept() = default;
 	};
 
 	template < typename ResThread >
@@ -93,16 +115,21 @@ namespace thr {
 		th.pause();
 	    }
 
-	    bool is_paused() override
+	    Status status() override
 	    {
-		return th.is_paused();
+		return th.status();
 	    }
 
-	    void resume() override
+	    void restart() override
 	    {
-		th.resume();
+		th.restart();
 	    }
 
+	    void stop() override
+	    {
+		th.stop();
+	    }
+	    
 	    bool joinable() override
 	    {
 		return th.joinable();

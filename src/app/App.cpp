@@ -7,7 +7,9 @@
 #include "parser/EchoCommand.hpp"
 
 #include "PauseCommand.hpp"
-#include "ResumeCommand.hpp"
+#include "RestartCommand.hpp"
+#include "StopCommand.hpp"
+#include "StatusCommand.hpp"
 
 namespace app {
 
@@ -17,7 +19,9 @@ namespace app {
     {
 	parser.push_back(psr::UnaryCommandParser<psr::EchoCommand>());
 	parser.push_back(psr::UnaryCommandParser<app::PauseCommand>(app::PauseCommand(th_runner)));
-	parser.push_back(psr::UnaryCommandParser<app::ResumeCommand>(app::ResumeCommand(th_runner)));
+	parser.push_back(psr::UnaryCommandParser<app::RestartCommand>(app::RestartCommand(th_runner)));
+	parser.push_back(psr::UnaryCommandParser<app::StopCommand>(app::StopCommand(th_runner)));
+	parser.push_back(psr::CommandParser<app::StatusCommand>(app::StatusCommand(th_runner)));
     }
 
     void Application::run(int th_num)
