@@ -28,7 +28,7 @@ namespace app {
 	    runner->pause(id - 1); // we map our application's ids [1 -> nb_threads]
 	                           // into the thread runner's "natural" C++ ids
 
-	    std::string msg = "paused thread " + std::to_string(id) + "\n";
+	    std::string msg = "paused thread " + std::to_string(id) + ".\n";
 	    std::cout << msg;
 	}
 	

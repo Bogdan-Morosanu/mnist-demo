@@ -32,9 +32,7 @@ int main(int argc, char **argv)
 
 	    app::Application demo_app;
 	    demo_app.run(th_num);
-	    
-	    std::cout << "done!" << std::endl;
-	
+	    	
 	} else {
 	    std::cout << "no thread num specified!" << std::endl;
 	    std::exit(EXIT_FAILURE);

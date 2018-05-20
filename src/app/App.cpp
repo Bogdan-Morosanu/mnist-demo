@@ -31,7 +31,16 @@ namespace app {
 	    th_runner.push_back(std::move(res_thread));
 	}
 	
-	parser.parse_stream(std::cin, std::cerr);
+	std::thread parse_thread([&]()
+				 {
+				   parser.parse_stream(std::cin, std::cerr);
+				 });
+	
+	th_runner.join_all();
+
+	std::cout << "All threads have finished their work.\nType 'exit' to finish parsing.\n" << std::endl;
+
+	parse_thread.join();
 
 	th_runner.finish();
     }
