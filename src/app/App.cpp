@@ -27,7 +27,7 @@ namespace app {
     void Application::run(int th_num)
     {
 	for (int i = 0 ; i < th_num; i++) {
-	    thr::ResThread<thr::CoutWorkSequence> res_thread({"thread " + std::to_string(i+1) + "\n", 10 });
+	    thr::ResThread<thr::CoutWorkSequence> res_thread({"thread " + std::to_string(i+1), 10 });
 	    th_runner.push_back(std::move(res_thread));
 	}
 	

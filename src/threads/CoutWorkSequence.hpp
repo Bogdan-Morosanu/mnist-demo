@@ -37,9 +37,16 @@ namespace thr {
 	    assert(!finished());
 
 	    times--;
-	    std::cout << str;			
+	    std::cout << (str + "\n"); // we do this so the .info() returns a nice string
+	                               // given more time we would escape the \n or something similar
 	    
 	    std::this_thread::sleep_for(std::chrono::seconds(3));
+	}
+
+
+	std::string info() const
+	{
+	    return "printing \"" + str + "\" to cout...";
 	}
 	
     private:
@@ -49,5 +56,7 @@ namespace thr {
 	int times;
     };
 }
+
+
 
 #endif

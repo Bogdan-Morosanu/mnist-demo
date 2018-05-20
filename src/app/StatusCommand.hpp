@@ -25,7 +25,7 @@ namespace app {
 		                   std::to_string(i+1) +
 		                   " - " +
 		                   status_string(runner->status(i)) +
-                                   "\n";
+                                   " [ " + runner->info(i) + " ]\n";
 
 		std::cout << msg;
 	    }

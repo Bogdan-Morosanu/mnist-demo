@@ -14,8 +14,11 @@ namespace thr {
     /// @brief Resumable thread, similar to std::thread, but with pause, restart and stop functionality.
     ///        Takes as input a Work Sequences, i.e. a class that can be move constructed and has
     ///        the following member functions:
-    ///           1) void step()     - execute an atomic piece of work that cannot be paused
-    ///           2) bool finished() - inform the caller if all the work steps have been completed
+    ///           1) void step()              - execute an atomic piece of work that cannot be paused
+    ///
+    ///           2) bool finished() const    - inform the caller if all the work steps have been completed
+    ///
+    ///           3) std::string info() const - info string to print to the console when describing the thread
     ///
     ///        This class takes ownership of that work sequence and runs it in a separate thread
     ///        of execution.
@@ -36,7 +39,7 @@ namespace thr {
 	}
 
 	// expose some std::thread functionality	
-	bool joinable() { return thread.joinable(); }
+	bool joinable() const { return thread.joinable(); }
 
 	void join() { thread.join(); }
 
@@ -68,7 +71,7 @@ namespace thr {
 	    sync->stopped = true;
 	}
 
-	Status status()
+	Status status() const
 	{
 	    std::lock_guard<std::mutex> lock(sync->mtx);
 
@@ -85,7 +88,11 @@ namespace thr {
 		return Status::FINISHED;
 	    }
 	}
-
+	
+	std::string info() const
+	{
+	    return sync->work.info();
+	}
 	
     private:
 

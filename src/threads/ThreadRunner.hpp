@@ -12,21 +12,23 @@ namespace thr {
     ///        A resumable thread is a function that executes some work in a
     ///        different thread, must be move constructible and have the
     ///        following public member functions:
-    ///	          1) void pause()         - pause execution of the thread (with
-    ///                                     some implementation defined delay).
+    ///	          1) void pause()               - pause execution of the thread (with
+    ///                                           some implementation defined delay).
     ///
-    ///           2) thr::Status status() - inform the caller of the thread's current
-    ///                                     status (running, paused, stopped, finished).
+    ///           2) thr::Status status() const - inform the caller of the thread's current
+    ///                                           status (running, paused, stopped, finished).
+    ///           3) std::string info() const   - info string to print to the console
+    ///                                           when describing the thread
     ///
-    ///           3) void restart()       - restart thread execution.
+    ///           4) void restart()             - restart thread execution.
     ///
-    ///           4) void stop()          - stop thread execution.
+    ///           5) void stop()                - stop thread execution.
     ///
-    ///           5) bool joinable()      - inform the caller if the thread is
-    ///                                     joinable (ie it still has work to do).
+    ///           6) bool joinable() const      - inform the caller if the thread is
+    ///                                           joinable (ie it still has work to do).
     ///
-    ///           6) void join()          - join the thread: returns when the thread
-    ///                                     has stopped execution.
+    ///           7) void join()                - join the thread: returns when the thread
+    ///                                           has stopped execution.
     class ThreadRunner {
     public:
 
@@ -68,10 +70,16 @@ namespace thr {
 	    threads[id]->stop();
 	}
 
-	Status status(int id)
+	Status status(int id) const
 	{
 	    return threads[id]->status();
 	}
+
+	std::string info(int id) const
+	{
+	    return threads[id]->info();
+	}
+		
 	
 	/// @brief joins all threads and then destroys them once they are done executing
 	void finish()
@@ -91,13 +99,15 @@ namespace thr {
 
 	    virtual void pause() = 0;
 
-	    virtual Status status() = 0;
+	    virtual Status status() const = 0;
+
+	    virtual std::string info() const = 0;
 
 	    virtual void restart() = 0;
 
 	    virtual void stop() = 0;
 	    
-	    virtual bool joinable() = 0;
+	    virtual bool joinable() const = 0;
 
 	    virtual void join() = 0;
 
@@ -115,11 +125,16 @@ namespace thr {
 		th.pause();
 	    }
 
-	    Status status() override
+	    Status status() const override
 	    {
 		return th.status();
 	    }
 
+	    std::string info() const override
+	    {
+		return th.info();
+	    }
+	    
 	    void restart() override
 	    {
 		th.restart();
@@ -130,7 +145,7 @@ namespace thr {
 		th.stop();
 	    }
 	    
-	    bool joinable() override
+	    bool joinable() const override
 	    {
 		return th.joinable();
 	    }
