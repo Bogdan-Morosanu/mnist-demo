@@ -1,2 +1,2 @@
-# mnist-demo
-small net demo on mnist
+# threads-demo
+small threading demo
