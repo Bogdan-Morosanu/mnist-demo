@@ -30,6 +30,14 @@ namespace psr {
 	
     private:
 
+	// we use the runtime concept idiom to implement polymorphic behaviour in our parser.
+	//
+	// our users define their own types and we can add them to our composite without
+	// requiring intrusive intervention like inheriting from some base class (which may be
+	// undesirable).
+	//
+	// all our users need to do is provide *any* type with a given interface.
+	//
 	struct CaseConcept {
 
 	    virtual bool accept(const std::string &str) = 0;
