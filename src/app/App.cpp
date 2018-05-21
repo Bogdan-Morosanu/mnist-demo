@@ -28,8 +28,16 @@ namespace app {
 
     void Application::run(int th_num)
     {
-	for (int i = 0 ; i < th_num; i++) {
-	    thr::ResThread<app::WarpWorkManager::WorkSequence> res_thread(this->warp_mgr.generate_work());
+	auto to_warp = th_num / 2;
+	auto to_int = th_num - to_warp;
+	
+	for (int i = 0 ; i < to_warp; i++) {
+	    thr::ResThread<app::WarpWorkManager::WorkSequence> res_thread(warp_mgr.generate_work());
+	    th_runner.push_back(std::move(res_thread));
+	}
+
+	for (int i = 0; i < to_int; i++) {
+	    thr::ResThread<app::IntegrateWorkManager::WorkSequence> res_thread(int_mgr.generate_work());
 	    th_runner.push_back(std::move(res_thread));
 	}
 	

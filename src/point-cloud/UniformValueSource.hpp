@@ -18,6 +18,12 @@ namespace ptc {
 	{
 	}
 
+	double generate()
+	{
+	    return dist(gen);
+	}
+	
+	
 	template < int Rows, int Cols >
 	Eigen::Matrix<double, Rows, Cols> generate()
 	{
@@ -27,7 +33,7 @@ namespace ptc {
 	    
 	    return ret;
 	}
-
+	
 	template < int Rows, int Cols >
 	void write_to(Eigen::Matrix<double, Rows, Cols> &out)
 	{
@@ -36,6 +42,11 @@ namespace ptc {
 		    out(r, c) = dist(gen);
 		}
 	    }
+	}
+
+	void write_to(double &d)
+	{
+	    d = dist(gen);
 	}
 	
     private:

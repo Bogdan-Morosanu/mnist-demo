@@ -38,7 +38,7 @@ namespace app {
 	{
 	    assert(!finished());
 
-	    for (int i = 0; i < step_num; ++i) {
+	    for (int i = 0; i < step_num && (0 != in_src->remaining()); ++i) {
 
 		Eigen::Matrix<double, 4, 1> pt_hom; // point in homogeneous coords
 
@@ -98,7 +98,7 @@ namespace app {
 	/// number of transformations per work step
 	int step_num;
 
-	/// numer of transformations to do
+	/// number of transformations to do
 	int total_due;
 
 	/// mutex to synchronise accesing in_src

@@ -7,6 +7,8 @@
 
 #include "WarpWorkManager.hpp"
 
+#include "IntegrateWorkManager.hpp"
+
 namespace app {
 
     /// @brief main class managing our application.
@@ -28,6 +30,9 @@ namespace app {
 
 	/// object handling the warp work sequence creation
 	app::WarpWorkManager warp_mgr;
+
+	/// object handling the integrate work sequence creation
+	app::IntegrateWorkManager int_mgr;
     };
     
 }
