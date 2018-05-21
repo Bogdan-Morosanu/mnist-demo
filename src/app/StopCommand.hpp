@@ -28,6 +28,11 @@ namespace app {
 	    int id = std::atoi(&*it) - 1;  // we map our application's ids [1 -> nb_threads]
                                            // into the thread runner's "natural" C++ ids
 
+	    if (id < 0 || id > runner->size()) {
+		std::cerr << ("invalid id " + std::to_string(id+1) + " passed to " + name() + " command!\n");
+		return;
+	    }
+	    
 	    auto sts = runner->status(id);
 	    if (sts == thr::Status::RUNNING || sts == thr::Status::PAUSED) {
 
