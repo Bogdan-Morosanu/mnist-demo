@@ -6,8 +6,6 @@
 
 #include "app/App.hpp"
 
-#include "point-cloud/UniformPointStream.hpp"
-
 namespace po = boost::program_options;
 
 int main(int argc, char **argv)

@@ -6,7 +6,6 @@
 #include <cassert>
 #include <thread>
 #include <chrono>
-#include <mutex>
 
 namespace thr {
 
