@@ -1,1 +1,1 @@
-sudo docker run -it --rm -v $(pwd)/src:/repo/src threads-demo
+sudo docker run -it --rm -v $(pwd):/repo threads-demo

@@ -40,6 +40,16 @@ files will be mapped inside the container, where you can build them with the 'ma
 changes you make to the source from your Host OS are visible inside the container, so you can edit
 the files in your Host and compile in the container. This workflow has been tested on Linux and Mac OS.
 
+If you are viewing the code on a Windows host you probaly want to keep the file line endings in the UNIX
+instead of Windows style, seeing as you will be compiling on a Linux container. You can see you to do
+that for Visual Studio [here](https://stackoverflow.com/questions/3802406/configure-visual-studio-with-unix-end-of-lines)
+and for Eclipse C++ [here](https://stackoverflow.com/questions/1886185/eclipse-and-windows-newlines).
+Alternatively, you can use the *experimental* ./win-compile.sh from within the container
+which copies the src directory to a new location inside the container, changes the line endings and
+then compiles from there. This last solution only looks at files known by git, so you should add any new
+files.
+ 
+
 Alternatively you could try to build the application natively, though this has not been tested and is
 probably much more of a hassle than using docker. To do so you need the following dependencies:
    * Boost 1.66.0
