@@ -34,14 +34,14 @@ Currently the program starts the first `<nb-threads>/2` as Warp threads and the 
 This project uses CMake to generate project files.
 
 The recommended work flow is that you generate your
-project files for your own IDE using CMake (you can find the top level CMakeLists.txt in the `./src`)
+project files for your own IDE using CMake (you can find the top level CMakeLists.txt in `./src`)
 and then start the docker image with `./run.sh`. The whole repository
 will be mapped inside the container, where you can build them with the `make` command. 
 Changes you make to the source from your Host OS are visible inside the container, so you can edit
 the files in your Host and compile them in the container immediately. This workflow has been tested 
 on Linux, Windows 10 and Mac OS.
 
-If you are viewing the code on a Windows host you probaly want to keep the file line endings in the UNIX
+If you are viewing the code on a Windows host you probably want to keep the file line endings in the UNIX
 instead of Windows style, seeing as you will be compiling on a Linux container. You can see you to do
 that for Visual Studio [here](https://stackoverflow.com/questions/3802406/configure-visual-studio-with-unix-end-of-lines)
 and for Eclipse C++ [here](https://stackoverflow.com/questions/1886185/eclipse-and-windows-newlines).
