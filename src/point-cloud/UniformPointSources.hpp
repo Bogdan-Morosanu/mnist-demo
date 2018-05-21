@@ -62,7 +62,7 @@ namespace ptc {
 	    : pt_num(point_num)
 	    , stream()
 	{
-	    assert(point_num >= 0); // maybe there is some use to create an empty sequence
+	    assert(point_num >= 0); // maybe there is some use in creating an empty sequence
 	}
 
 	const Eigen::Matrix<double, 3, 1> &value() const

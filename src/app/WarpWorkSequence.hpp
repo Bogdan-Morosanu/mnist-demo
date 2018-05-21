@@ -53,9 +53,9 @@ namespace app {
 
 		Eigen::Matrix<double, 3, 1> ret;
 
-		ret(0, 0) = hom_result(0, 0);		
-		ret(1, 0) = hom_result(1, 0);
-		ret(2, 0) = hom_result(2, 0);
+		ret(0, 0) = hom_result(0, 0) / hom_result(3, 0);		
+		ret(1, 0) = hom_result(1, 0) / hom_result(3, 0);
+		ret(2, 0) = hom_result(2, 0) / hom_result(3, 0);
 
 		{
 		    // note that we need sinchronise when we mutate shared object.
