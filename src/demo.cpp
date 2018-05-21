@@ -26,8 +26,8 @@ int main(int argc, char **argv)
 	    std::exit(0);
 	}
 	
-	if (vm.count("thread-num")) {
-	    int th_num = vm["thread-num"].as<int>();
+	if (vm.count("threads")) {
+	    int th_num = vm["threads"].as<int>();
 	    std::cout << "starting " << th_num << " threads...\n";
 
 	    app::Application demo_app;

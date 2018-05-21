@@ -24,12 +24,19 @@ namespace app {
 	
 	void issue(std::string::const_iterator it)
 	{
-	    int id = std::atoi(&*it);
-	    runner->pause(id - 1); // we map our application's ids [1 -> nb_threads]
-	                           // into the thread runner's "natural" C++ ids
+	    int id = std::atoi(&*it) - 1;  // we map our application's ids [1 -> nb_threads]
+                                           // into the thread runner's "natural" C++ ids
 
-	    std::string msg = "paused thread " + std::to_string(id) + ".\n";
-	    std::cout << msg;
+	    if (runner->status(id) == thr::Status::RUNNING) {
+
+		runner->pause(id);
+		std::string msg = "paused thread " + std::to_string(id+1) + ".\n";
+		std::cout << msg;
+
+	    } else {
+		std::cerr << "error: trying to pause thread that is not running!\n";
+	    }
+
 	}
 	
     private:
