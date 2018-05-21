@@ -4,9 +4,9 @@ Small demo of a command line interface controlling threads.
 ## Instalation
 The easiest way to run this application is to build and run it portably from its
 docker container. Once you have docker installed and the docker daemon running,
-just run `./build.sh` to build the container.
+just run `./build.sh` (`build.bat` on Windows) to build the container.
 
-Once built, you run the container with `./run.sh`
+Once built, you run the container with `./run.sh` (`run.bat` on Windows).
 
 
 ## Usage
@@ -38,7 +38,8 @@ project files for your own IDE using CMake (you can find the top level CMakeList
 and then start the docker image with `./run.sh`. The whole repository
 will be mapped inside the container, where you can build them with the `make` command. 
 Changes you make to the source from your Host OS are visible inside the container, so you can edit
-the files in your Host and compile them in the container immediately. This workflow has been tested on Linux and Mac OS.
+the files in your Host and compile them in the container immediately. This workflow has been tested 
+on Linux, Windows 10 and Mac OS.
 
 If you are viewing the code on a Windows host you probaly want to keep the file line endings in the UNIX
 instead of Windows style, seeing as you will be compiling on a Linux container. You can see you to do
