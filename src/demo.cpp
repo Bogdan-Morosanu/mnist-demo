@@ -6,6 +6,8 @@
 
 #include "app/App.hpp"
 
+#include "point-cloud/UniformPointStream.hpp"
+
 namespace po = boost::program_options;
 
 int main(int argc, char **argv)
@@ -28,6 +30,7 @@ int main(int argc, char **argv)
 	
 	if (vm.count("threads")) {
 	    int th_num = vm["threads"].as<int>();
+
 	    std::cout << "starting " << th_num << " threads...\n";
 
 	    app::Application demo_app;
