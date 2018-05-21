@@ -66,9 +66,14 @@ namespace thr {
 	/// stop thread execution
 	void stop()
 	{
-	    std::lock_guard<std::mutex> lock(sync->mtx);
+	    {
+		std::lock_guard<std::mutex> lock(sync->mtx);
 
-	    sync->stopped = true;
+		sync->stopped = true;
+	    }
+
+	    // we need this since we allow to stop paused threads
+	    sync->wakeup_cv.notify_one();
 	}
 
 	Status status() const
@@ -167,7 +172,8 @@ namespace thr {
 		std::unique_lock<std::mutex> lock(sync.mtx);
 
 		if (sync.paused) {
-		    sync.wakeup_cv.wait(lock, [&]() { return !sync.paused; });
+		    // we wakeup while we are not paused, but also if we are stopped when paused
+		    sync.wakeup_cv.wait(lock, [&]() { return (!sync.paused) || sync.stopped; });
 		} 
 	    }
 
