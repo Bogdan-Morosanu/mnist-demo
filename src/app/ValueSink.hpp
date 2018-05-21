@@ -8,11 +8,11 @@ namespace app {
     public:
 
 	template < typename T >
-	void accept(T t)
+	void accept(T &&t)
 	{
 	    // in a "real" program we would move this value to its useful destination
 	    // in this program we just need to prevent the compiler from optimising this function call away
-	    asm volatile("" : : "g"(&t) : "memory");
+	    asm volatile ("" :: "g" (t));
 	}
     };
 }
