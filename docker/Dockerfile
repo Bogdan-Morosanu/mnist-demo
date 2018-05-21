@@ -11,4 +11,4 @@ RUN mkdir /repo && mkdir /repo/build
 COPY src /repo/src
 RUN cd /repo/build && cmake ../src && make
 
-WORKDIR /repo
+WORKDIR /repo/build

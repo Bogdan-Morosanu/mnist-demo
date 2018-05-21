@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 	po::options_description desc("Allowed options");
 	desc.add_options()
 	    ("help", "print help message")
-	    ("thread-num", po::value<int>(), "number of threads to run");
+	    ("threads", po::value<int>(), "number of threads to run");
     
 	po::variables_map vm;
 	po::store(po::parse_command_line(argc, argv, desc), vm);
