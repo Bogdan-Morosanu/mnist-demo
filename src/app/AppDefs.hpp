@@ -7,7 +7,7 @@ namespace app {
     struct AppDefs {
 
 	/// @brief regex pattern to accept positive integers.
-	static std::string number_pattern() { return "[1-9][0-9]*"; }
+	static std::string number_pattern() { return "-?[0-9]+"; }
     };
 }
 #endif
