@@ -1,7 +1,6 @@
 #include "Parser.hpp"
 
-
-namespace prs {
+namespace psr {
     
     /// parse input stream in and log parsing errors to err
     void CaseParser::parse_stream(std::istream &in, std::ostream &err)
