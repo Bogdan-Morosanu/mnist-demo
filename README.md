@@ -10,6 +10,9 @@ Once built, you run the container with ./run.sh
 
 
 ## Usage
+Once you spin up a container you will be sitting in the build directory, with the code already compiled
+(in the state it was when you called ./build.sh). You need only call the executable.
+
 ./demo --threads <nb-threads> will run nb-threads, and start parsing commands from stdin.
 
 Commands:
