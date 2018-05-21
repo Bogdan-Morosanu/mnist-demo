@@ -28,8 +28,11 @@ Currently there are three thread types:
 Currently the program starts the first <nb-threads>/2 as Warp threads and the rest as Integrate threads.
 
 ## Developing / Inspecting the Code
-This project uses CMake to generate project files. The recommended work flow is that you generate your
-project files for your own IDE using CMake and then start the docker image with ./run.sh. The source
+This project uses CMake to generate project files.
+
+The recommended work flow is that you generate your
+project files for your own IDE using CMake (you can find the top level CMakeLists.txt in the ./src)
+and then start the docker image with ./run.sh. The source
 files will be mapped inside the container, where you can build them with the 'make' command. Whatever
 changes you make to the source from your Host OS are visible inside the container, so you can edit
 the files in your Host and compile in the container. This workflow has been tested on Linux and Mac OS.
