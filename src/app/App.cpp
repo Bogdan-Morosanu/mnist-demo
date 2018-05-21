@@ -10,6 +10,8 @@
 #include "RestartCommand.hpp"
 #include "StopCommand.hpp"
 #include "StatusCommand.hpp"
+#include "WarpWorkSequence.hpp"
+#include "WarpWorkManager.hpp"
 
 namespace app {
 
@@ -27,7 +29,7 @@ namespace app {
     void Application::run(int th_num)
     {
 	for (int i = 0 ; i < th_num; i++) {
-	    thr::ResThread<thr::CoutWorkSequence> res_thread({"thread " + std::to_string(i+1), 10 });
+	    thr::ResThread<app::WarpWorkManager::WorkSequence> res_thread(this->warp_mgr.generate_work());
 	    th_runner.push_back(std::move(res_thread));
 	}
 	

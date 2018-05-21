@@ -106,7 +106,7 @@ namespace thr {
 	struct Sync {
 
 	    Sync(WorkSeqVal &&work)
-		: work(work)
+		: work(std::move(work))
 		, paused(false)
 		, stopped(false)
 		, finished(false)

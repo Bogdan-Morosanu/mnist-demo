@@ -5,6 +5,8 @@
 
 #include "parser/Parser.hpp"
 
+#include "WarpWorkManager.hpp"
+
 namespace app {
 
     /// @brief main class managing our application.
@@ -23,6 +25,9 @@ namespace app {
 
 	/// object parsing input from the user
 	psr::CaseParser parser;
+
+	/// object handling the warp work sequence creation
+	app::WarpWorkManager warp_mgr;
     };
     
 }

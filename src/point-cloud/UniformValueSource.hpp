@@ -13,12 +13,9 @@ namespace ptc {
 
 	explicit
         UniformValueSource(double low = -1.0, double high = 1.0)
-	    : rd()
-	    , gen()
+	    : gen(std::random_device()())
 	    , dist(low, high)
 	{
-	    gen = std::mt19937(rd()); // do it like this so re-ordering members does not create
-	                            // undefined behaviour
 	}
 
 	template < int Rows, int Cols >
@@ -43,8 +40,8 @@ namespace ptc {
 	
     private:
 	
-	std::random_device rd;
 	std::mt19937 gen;
+
 	std::uniform_real_distribution<double> dist;
     };
     

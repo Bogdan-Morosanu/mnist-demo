@@ -72,17 +72,21 @@ namespace ptc {
 
 	void advance()
 	{
-	    assert(!finished());
+	    assert(!empty());
 	    
 	    stream.advance();
 	    pt_num--;
 	}
 
-	bool finished() const
+	bool empty() const
 	{
 	    return pt_num == 0;
 	}
-	
+
+	int remaining() const
+	{
+	    return pt_num;
+	}
 
     private:
 
